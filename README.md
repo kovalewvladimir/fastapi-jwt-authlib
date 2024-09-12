@@ -4,7 +4,7 @@
 
 ---
 
-**Source Code**: <a href="https://github.com/IndominusByte/fastapi-jwt-auth" target="_blank">https://github.com/IndominusByte/fastapi-jwt-auth</a>
+**Source Code**: <a href="https://github.com/kovalewvladimir/fastapi-jwt-authlib" target="_blank">https://github.com/kovalewvladimir/fastapi-jwt-authlib</a>
 
 ---
 
