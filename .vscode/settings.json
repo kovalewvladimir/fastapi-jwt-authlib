@@ -1,0 +1,47 @@
+{
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
+  },
+
+  "isort.args": [
+    "--profile",
+    "black"
+  ],
+
+  "files.exclude": {
+    "**/__pycache__": true
+  },
+
+  "editor.tabSize": 4,
+
+  "git.openRepositoryInParentFolders": "always",
+
+
+  "python.testing.pytestArgs": [
+    "."
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+
+  "python.languageServer": "Pylance",
+  "python.analysis.typeCheckingMode": "basic",
+  // "python.analysis.inlayHints.functionReturnTypes": true,
+  // "python.analysis.inlayHints.variableTypes": true,
+  "python.analysis.importFormat": "absolute",
+  "python.analysis.indexing": true,
+  "python.analysis.diagnosticMode": "workspace",
+
+  "python.analysis.autoSearchPaths": true,
+  // "python.analysis.autoImportCompletions": true,
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.enablePytestSupport": true,
+
+  "sqlite3-editor.ui.movePanelIfSpaceAllows": "bottom",
+  "sqlite3-editor.ui.minimizePanel": true,
+  "sqlite3-editor.ui.tableSelector.displayShadowTables": true,
+  "sqlite3-editor.ui.tableSelector.displayColumns": true,
+}

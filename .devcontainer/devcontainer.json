@@ -1,0 +1,31 @@
+{
+	"name": "fastapi-jwt-authlib",
+	"build": {
+		"context": "..",
+		"dockerfile": "Dockerfile"
+	},
+	"runArgs": [
+		"--name=fastapi-jwt-authlib"
+	],
+	"customizations": {
+		"vscode": {
+			"settings": {},
+			"extensions": [
+				// для работы на Python
+				"ms-python.python",
+				"ms-python.pylint",
+				"ms-python.black-formatter",
+				"ms-python.isort",
+				"donjayamanne.python-environment-manager",
+				"tamasfe.even-better-toml",
+
+				// Словари для проверки орфографии
+				"streetsidesoftware.code-spell-checker",
+				"streetsidesoftware.code-spell-checker-russian",
+
+				// git
+				"donjayamanne.githistory"
+			]
+		}
+	}
+}
