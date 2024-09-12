@@ -39,9 +39,4 @@
   // "python.analysis.autoImportCompletions": true,
   "python.analysis.completeFunctionParens": true,
   "python.analysis.enablePytestSupport": true,
-
-  "sqlite3-editor.ui.movePanelIfSpaceAllows": "bottom",
-  "sqlite3-editor.ui.minimizePanel": true,
-  "sqlite3-editor.ui.tableSelector.displayShadowTables": true,
-  "sqlite3-editor.ui.tableSelector.displayColumns": true,
 }
