@@ -12,6 +12,7 @@ repository = "https://github.com/kovalewvladimir/fastapi-jwt-authlib"
 python = "^3.12"
 
 fastapi = "^0.111.1"
+pyjwt = "^2.9.0"
 
 [tool.poetry.group.dev.dependencies]
 # Форматирование кода
