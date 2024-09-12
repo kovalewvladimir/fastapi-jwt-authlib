@@ -4,6 +4,9 @@ version = "0.1.0"
 description = "A FastAPI JWT authentication library"
 authors = ["kovalew.vladimir <kovalew.vladimir@gmail.com>"]
 readme = "README.md"
+license = "MIT"
+homepage = "https://github.com/kovalewvladimir/fastapi-jwt-authlib"
+repository = "https://github.com/kovalewvladimir/fastapi-jwt-authlib"
 
 [tool.poetry.dependencies]
 python = "^3.12"
