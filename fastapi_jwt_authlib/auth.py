@@ -69,12 +69,20 @@ class AuthJWT:
         return int(datetime.now(timezone.utc).timestamp())
 
     def _create_token(self, subject: str, token_type: TokenTypes) -> str:
+        match token_type:
+            case "access":
+                lifetime = self._token_access_lifetime
+            case "refresh":
+                lifetime = self._token_refresh_lifetime
+            case _:
+                raise ValueError("Invalid token type")
+
         payload = {
             "sub": subject,
             "iat": self._get_int_from_datetime_now(),
             "nbf": self._get_int_from_datetime_now(),
             "jti": self._get_jwt_identifier(),
-            "exp": self._get_int_from_datetime_now() + self._token_access_lifetime,
+            "exp": self._get_int_from_datetime_now() + lifetime,
             "type": token_type,
         }
         token = jwt.encode(
@@ -112,12 +120,13 @@ class AuthJWT:
         )
 
     def decode_token(self, token_type: TokenTypes) -> dict:
-        if token_type == "access":
-            key = self._cookie_access_key
-        elif token_type == "refresh":
-            key = self._cookie_refresh_key
-        else:
-            raise ValueError("Invalid token type")
+        match token_type:
+            case "access":
+                key = self._cookie_access_key
+            case "refresh":
+                key = self._cookie_refresh_key
+            case _:
+                raise ValueError("Invalid token type")
 
         token = self._request.cookies.get(key)
         if token is None:
