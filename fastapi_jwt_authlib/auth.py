@@ -185,8 +185,11 @@ class AuthContext:
     def __call__(self, request: HTTPConnection, response: Response) -> AuthData:
         auth_jwt = AuthJWT(request, response)
         decoded_token = auth_jwt.decode_token(self._token_type)
-        user = decoded_token["user"]
+        user = decoded_token.get("user")
         rules = decoded_token.get("rules", tuple())
+
+        if user is None:
+            raise JWTDecodeError(401, "Invalid user")
 
         if decoded_token["type"] != self._token_type:
             raise JWTDecodeError(401, "Invalid token type")
