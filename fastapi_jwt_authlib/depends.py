@@ -2,8 +2,13 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from fastapi_jwt_authlib.auth import AuthContext, AuthContextData, AuthJWT
+from fastapi_jwt_authlib.auth import AuthContext, AuthData, AuthJWT
+
+
+def auth_access_rules(rules: list[str]) -> AuthContext:
+    return AuthContext("access", rules)
+
 
 AuthDepends = Annotated[AuthJWT, Depends(AuthJWT)]
-AuthAccessContextDepends = Annotated[AuthContextData, Depends(AuthContext("access"))]
-AuthRefreshContextDepends = Annotated[AuthContextData, Depends(AuthContext("refresh"))]
+AuthAccessDepends = Annotated[AuthData, Depends(AuthContext("access"))]
+AuthRefreshDepends = Annotated[AuthData, Depends(AuthContext("refresh"))]

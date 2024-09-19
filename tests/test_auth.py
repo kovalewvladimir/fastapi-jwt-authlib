@@ -1,51 +1,8 @@
 from http.cookies import SimpleCookie
 
 import jwt
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from fastapi.testclient import TestClient
 
 from fastapi_jwt_authlib.auth import AuthJWT
-from fastapi_jwt_authlib.depends import (
-    AuthAccessContextDepends,
-    AuthDepends,
-    AuthRefreshContextDepends,
-)
-from fastapi_jwt_authlib.exception import AuthJWTException
-
-
-def create_example_client():
-    app = FastAPI()
-
-    username = "example"
-
-    @app.exception_handler(AuthJWTException)
-    def authjwt_exception_handler(_request: Request, exc: AuthJWTException):
-        return JSONResponse(status_code=exc.status_code, content={"error": {"detail": exc.message}})
-
-    @app.post("/login")
-    def login(auth: AuthDepends):
-        auth.generate_and_store_access_token(subject=username)
-        auth.generate_and_store_refresh_token(subject=username)
-        return {"msg": "Successful login"}
-
-    @app.delete("/logout")
-    def logout(auth: AuthDepends):
-        auth.unset_access_cookies()
-        auth.unset_refresh_cookies()
-        return {"msg": "Successful logout"}
-
-    @app.post("/refresh")
-    def refresh(auth: AuthRefreshContextDepends):
-        auth.jwt.generate_and_store_access_token(subject=auth.user)
-        return {"msg": "The token has been refresh"}
-
-    @app.get("/protected")
-    def protected(auth: AuthAccessContextDepends):
-        return {"user": auth.user}
-
-    return TestClient(app)
-
 
 openapi_schema = {
     "openapi": "3.1.0",
@@ -55,6 +12,42 @@ openapi_schema = {
             "post": {
                 "summary": "Login",
                 "operationId": "login_login_post",
+                "responses": {
+                    "200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}
+                },
+            }
+        },
+        "/login/admin": {
+            "post": {
+                "summary": "Login Admin",
+                "operationId": "login_admin_login_admin_post",
+                "responses": {
+                    "200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}
+                },
+            }
+        },
+        "/login/users": {
+            "post": {
+                "summary": "Login Rules",
+                "operationId": "login_rules_login_users_post",
+                "responses": {
+                    "200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}
+                },
+            }
+        },
+        "/login/user1": {
+            "post": {
+                "summary": "Login User1",
+                "operationId": "login_user1_login_user1_post",
+                "responses": {
+                    "200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}
+                },
+            }
+        },
+        "/login/user2": {
+            "post": {
+                "summary": "Login User2",
+                "operationId": "login_user2_login_user2_post",
                 "responses": {
                     "200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}
                 },
@@ -87,26 +80,59 @@ openapi_schema = {
                 },
             }
         },
+        "/protected/admin": {
+            "get": {
+                "summary": "Protected Admin",
+                "operationId": "protected_admin_protected_admin_get",
+                "responses": {
+                    "200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}
+                },
+            }
+        },
+        "/protected/users": {
+            "get": {
+                "summary": "Protected Users",
+                "operationId": "protected_users_protected_users_get",
+                "responses": {
+                    "200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}
+                },
+            }
+        },
+        "/protected/user1": {
+            "get": {
+                "summary": "Protected User1",
+                "operationId": "protected_user1_protected_user1_get",
+                "responses": {
+                    "200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}
+                },
+            }
+        },
+        "/protected/user2": {
+            "get": {
+                "summary": "Protected User2",
+                "operationId": "protected_user2_protected_user2_get",
+                "responses": {
+                    "200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}
+                },
+            }
+        },
     },
 }
 
 
-def test_openapi_schema():
-    client = create_example_client()
+def test_openapi_schema(client):
     response = client.get("/openapi.json")
     assert response.status_code == 200, response.text
     assert response.json() == openapi_schema
 
 
-def test_login():
-    client = create_example_client()
+def test_login(client):
     response = client.post("/login")
     assert response.status_code == 200, response.text
     assert response.json() == {"msg": "Successful login"}
 
 
-def test_logout():
-    client = create_example_client()
+def test_logout(client):
     response = client.delete("/logout")
     assert response.status_code == 200, response.text
     assert response.json() == {"msg": "Successful logout"}
@@ -126,8 +152,7 @@ def test_logout():
     assert refresh_token_cookie["max-age"] == "0"
 
 
-def test_cookies_secure():
-    client = create_example_client()
+def test_cookies_secure(client):
     response = client.post("/login")
     assert response.status_code == 200, response.text
 
@@ -146,8 +171,7 @@ def test_cookies_secure():
     assert refresh_token_cookie["secure"] == ""
 
 
-def test_cookies_value_lifetime():
-    client = create_example_client()
+def test_cookies_value_lifetime(client):
     response = client.post("/login")
     assert response.status_code == 200, response.text
 
@@ -170,8 +194,7 @@ def test_cookies_value_lifetime():
     assert decoded_refresh_token["exp"] == decoded_refresh_token["iat"] + token_refresh_lifetime
 
 
-def test_refresh_token():
-    client = create_example_client()
+def test_refresh_token(client):
     response = client.post("/login")
     assert response.status_code == 200, response.text
 
@@ -180,8 +203,7 @@ def test_refresh_token():
     assert response.json() == {"msg": "The token has been refresh"}
 
 
-def test_protected():
-    client = create_example_client()
+def test_protected(client):
     response = client.post("/login")
     assert response.status_code == 200, response.text
 
@@ -190,8 +212,106 @@ def test_protected():
     assert response.json() == {"user": "example"}
 
 
-def test_protected_no_access_token():
-    client = create_example_client()
+def test_protected_no_access_token(client):
     response = client.get("/protected")
     assert response.status_code == 401, response.text
     assert response.json() == {"error": {"detail": "Missing access token"}}
+
+
+def test_protected_admin(client):
+    response = client.post("/login/admin")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected/admin")
+    assert response.status_code == 200, response.text
+    assert response.json() == {"user": "example", "rules": ["admin"]}
+
+
+def test_protected_admin_no_access_token(client):
+    response = client.post("/login")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected/admin")
+    assert response.status_code == 403, response.text
+    assert response.json() == {"error": {"detail": "Invalid user rule"}}
+
+
+def test_user1_protection_endpoint_user1(client):
+    response = client.post("/login/user1")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected/user1")
+    assert response.status_code == 200, response.text
+    assert response.json() == {"user": "example", "rules": ["user1"]}
+
+
+def test_user1_protection_endpoint_user2(client):
+    response = client.post("/login/user1")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected/user2")
+    assert response.status_code == 403, response.text
+    assert response.json() == {"error": {"detail": "Invalid user rule"}}
+
+
+def test_user1_protection_endpoint_users(client):
+    response = client.post("/login/user1")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected/users")
+    assert response.status_code == 200, response.text
+    assert response.json() == {"user": "example", "rules": ["user1"]}
+
+
+def test_user2_protection_endpoint_user1(client):
+    response = client.post("/login/user2")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected/user1")
+    assert response.status_code == 403, response.text
+    assert response.json() == {"error": {"detail": "Invalid user rule"}}
+
+
+def test_user2_protection_endpoint_user2(client):
+    response = client.post("/login/user2")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected/user2")
+    assert response.status_code == 200, response.text
+    assert response.json() == {"user": "example", "rules": ["user2"]}
+
+
+def test_user2_protection_endpoint_users(client):
+    response = client.post("/login/user2")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected/users")
+    assert response.status_code == 200, response.text
+    assert response.json() == {"user": "example", "rules": ["user2"]}
+
+
+def test_users_protection_endpoint_user1(client):
+    response = client.post("/login/users")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected/user1")
+    assert response.status_code == 200, response.text
+    assert response.json() == {"user": "example", "rules": ["user1", "user2"]}
+
+
+def test_users_protection_endpoint_user2(client):
+    response = client.post("/login/users")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected/user2")
+    assert response.status_code == 200, response.text
+    assert response.json() == {"user": "example", "rules": ["user1", "user2"]}
+
+
+def test_users_protection_endpoint_users(client):
+    response = client.post("/login/users")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected/users")
+    assert response.status_code == 200, response.text
+    assert response.json() == {"user": "example", "rules": ["user1", "user2"]}

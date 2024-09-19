@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Literal
 from uuid import uuid4
@@ -7,16 +7,27 @@ import jwt
 from fastapi import Response
 from fastapi.requests import HTTPConnection
 
-from fastapi_jwt_authlib.exception import JWTDecodeError, MissingTokenError
+from fastapi_jwt_authlib.exception import (
+    AuthJWTException,
+    JWTDecodeError,
+    MissingTokenError,
+)
 from fastapi_jwt_authlib.helper import default_if_none
 
 TokenTypes = Literal["access", "refresh"]
 
 
 @dataclass
-class AuthContextData:
+class JWTUserData:
     user: str
+    rules: list[str] = field(default_factory=list)
+
+
+@dataclass
+class AuthData:
     jwt: "AuthJWT"
+    user: str
+    rules: list[str]
 
 
 class AuthJWT:
@@ -68,7 +79,7 @@ class AuthJWT:
     def _get_int_from_datetime_now(self) -> int:
         return int(datetime.now(timezone.utc).timestamp())
 
-    def _create_token(self, subject: str, token_type: TokenTypes) -> str:
+    def _create_token(self, data: JWTUserData, token_type: TokenTypes) -> str:
         match token_type:
             case "access":
                 lifetime = self._token_access_lifetime
@@ -77,8 +88,11 @@ class AuthJWT:
             case _:
                 raise ValueError("Invalid token type")
 
-        payload = {
-            "sub": subject,
+        payload_user = data.__dict__
+        if token_type == "refresh":
+            payload_user.pop("rules")
+
+        payload = payload_user | {
             "iat": self._get_int_from_datetime_now(),
             "nbf": self._get_int_from_datetime_now(),
             "jti": self._get_jwt_identifier(),
@@ -141,12 +155,12 @@ class AuthJWT:
 
         return decoded_token
 
-    def generate_and_store_access_token(self, subject: str):
-        token = self._create_token(subject, "access")
+    def generate_and_store_access_token(self, data: JWTUserData):
+        token = self._create_token(data, "access")
         self._set_access_cookies(token)
 
-    def generate_and_store_refresh_token(self, subject: str):
-        token = self._create_token(subject, "refresh")
+    def generate_and_store_refresh_token(self, data: JWTUserData):
+        token = self._create_token(data, "refresh")
         self._set_refresh_cookies(token)
 
     def unset_access_cookies(self):
@@ -162,19 +176,26 @@ class AuthJWT:
 
 class AuthContext:
     _token_type: TokenTypes
+    _rules: list[str] | None
 
-    def __init__(self, token_type: TokenTypes):
+    def __init__(self, token_type: TokenTypes, rules: list[str] | None = None):
         self._token_type = token_type
+        self._rules = rules
 
-    def __call__(self, request: HTTPConnection, response: Response) -> AuthContextData:
+    def __call__(self, request: HTTPConnection, response: Response) -> AuthData:
         auth_jwt = AuthJWT(request, response)
         decoded_token = auth_jwt.decode_token(self._token_type)
+        user = decoded_token["user"]
+        rules = decoded_token.get("rules", tuple())
 
         if decoded_token["type"] != self._token_type:
-            if self._token_type == "access":
-                raise JWTDecodeError(401, "Invalid token type, expected access token")
+            raise JWTDecodeError(401, "Invalid token type")
 
-        return AuthContextData(
-            user=decoded_token["sub"],
+        if self._rules is not None and not any(rule in rules for rule in self._rules):
+            raise AuthJWTException(403, "Invalid user rule")
+
+        return AuthData(
             jwt=auth_jwt,
+            user=user,
+            rules=rules,
         )
