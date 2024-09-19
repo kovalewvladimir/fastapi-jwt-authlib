@@ -28,8 +28,8 @@ openapi_schema = {
         },
         "/login/users": {
             "post": {
-                "summary": "Login Rules",
-                "operationId": "login_rules_login_users_post",
+                "summary": "Login Roles",
+                "operationId": "login_roles_login_users_post",
                 "responses": {
                     "200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}
                 },
@@ -209,7 +209,7 @@ def test_protected(client):
 
     response = client.get("/protected")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example", "rules": []}
+    assert response.json() == {"user": "example", "roles": []}
 
 
 def test_protected_no_access_token(client):
@@ -224,7 +224,7 @@ def test_protected_admin(client):
 
     response = client.get("/protected/admin")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example", "rules": ["admin"]}
+    assert response.json() == {"user": "example", "roles": ["admin"]}
 
 
 def test_protected_admin_no_access_token(client):
@@ -233,7 +233,7 @@ def test_protected_admin_no_access_token(client):
 
     response = client.get("/protected/admin")
     assert response.status_code == 403, response.text
-    assert response.json() == {"error": {"detail": "Invalid user rule"}}
+    assert response.json() == {"error": {"detail": "Invalid user role"}}
 
 
 def test_user1_protection_endpoint_user1(client):
@@ -242,7 +242,7 @@ def test_user1_protection_endpoint_user1(client):
 
     response = client.get("/protected/user1")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example", "rules": ["user1"]}
+    assert response.json() == {"user": "example", "roles": ["user1"]}
 
 
 def test_user1_protection_endpoint_user2(client):
@@ -251,7 +251,7 @@ def test_user1_protection_endpoint_user2(client):
 
     response = client.get("/protected/user2")
     assert response.status_code == 403, response.text
-    assert response.json() == {"error": {"detail": "Invalid user rule"}}
+    assert response.json() == {"error": {"detail": "Invalid user role"}}
 
 
 def test_user1_protection_endpoint_users(client):
@@ -260,7 +260,7 @@ def test_user1_protection_endpoint_users(client):
 
     response = client.get("/protected/users")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example", "rules": ["user1"]}
+    assert response.json() == {"user": "example", "roles": ["user1"]}
 
 
 def test_user1_protection_endpoint_protected(client):
@@ -269,7 +269,7 @@ def test_user1_protection_endpoint_protected(client):
 
     response = client.get("/protected")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example", "rules": ["user1"]}
+    assert response.json() == {"user": "example", "roles": ["user1"]}
 
 
 def test_user2_protection_endpoint_user1(client):
@@ -278,7 +278,7 @@ def test_user2_protection_endpoint_user1(client):
 
     response = client.get("/protected/user1")
     assert response.status_code == 403, response.text
-    assert response.json() == {"error": {"detail": "Invalid user rule"}}
+    assert response.json() == {"error": {"detail": "Invalid user role"}}
 
 
 def test_user2_protection_endpoint_user2(client):
@@ -287,7 +287,7 @@ def test_user2_protection_endpoint_user2(client):
 
     response = client.get("/protected/user2")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example", "rules": ["user2"]}
+    assert response.json() == {"user": "example", "roles": ["user2"]}
 
 
 def test_user2_protection_endpoint_users(client):
@@ -296,7 +296,7 @@ def test_user2_protection_endpoint_users(client):
 
     response = client.get("/protected/users")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example", "rules": ["user2"]}
+    assert response.json() == {"user": "example", "roles": ["user2"]}
 
 
 def test_user2_protection_endpoint_protected(client):
@@ -305,7 +305,7 @@ def test_user2_protection_endpoint_protected(client):
 
     response = client.get("/protected")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example", "rules": ["user2"]}
+    assert response.json() == {"user": "example", "roles": ["user2"]}
 
 
 def test_users_protection_endpoint_user1(client):
@@ -314,7 +314,7 @@ def test_users_protection_endpoint_user1(client):
 
     response = client.get("/protected/user1")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example", "rules": ["user1", "user2"]}
+    assert response.json() == {"user": "example", "roles": ["user1", "user2"]}
 
 
 def test_users_protection_endpoint_user2(client):
@@ -323,7 +323,7 @@ def test_users_protection_endpoint_user2(client):
 
     response = client.get("/protected/user2")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example", "rules": ["user1", "user2"]}
+    assert response.json() == {"user": "example", "roles": ["user1", "user2"]}
 
 
 def test_users_protection_endpoint_users(client):
@@ -332,7 +332,7 @@ def test_users_protection_endpoint_users(client):
 
     response = client.get("/protected/users")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example", "rules": ["user1", "user2"]}
+    assert response.json() == {"user": "example", "roles": ["user1", "user2"]}
 
 
 def test_users_protection_endpoint_protected(client):
@@ -341,4 +341,4 @@ def test_users_protection_endpoint_protected(client):
 
     response = client.get("/protected")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example", "rules": ["user1", "user2"]}
+    assert response.json() == {"user": "example", "roles": ["user1", "user2"]}

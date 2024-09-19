@@ -20,14 +20,14 @@ TokenTypes = Literal["access", "refresh"]
 @dataclass
 class JWTUserData:
     user: str
-    rules: list[str] = field(default_factory=list)
+    roles: list[str] = field(default_factory=list)
 
 
 @dataclass
 class AuthData:
     jwt: "AuthJWT"
     user: str
-    rules: list[str]
+    roles: list[str]
 
 
 class AuthJWT:
@@ -90,7 +90,7 @@ class AuthJWT:
 
         payload_user = data.__dict__
         if token_type == "refresh":
-            payload_user.pop("rules")
+            payload_user.pop("roles")
 
         payload = payload_user | {
             "iat": self._get_int_from_datetime_now(),
@@ -176,17 +176,17 @@ class AuthJWT:
 
 class AuthContext:
     _token_type: TokenTypes
-    _rules: list[str] | None
+    _roles: list[str] | None
 
-    def __init__(self, token_type: TokenTypes, rules: list[str] | None = None):
+    def __init__(self, token_type: TokenTypes, roles: list[str] | None = None):
         self._token_type = token_type
-        self._rules = rules
+        self._roles = roles
 
     def __call__(self, request: HTTPConnection, response: Response) -> AuthData:
         auth_jwt = AuthJWT(request, response)
         decoded_token = auth_jwt.decode_token(self._token_type)
         user = decoded_token.get("user")
-        rules = decoded_token.get("rules", tuple())
+        roles = decoded_token.get("roles", tuple())
 
         if user is None:
             raise JWTDecodeError(401, "Invalid user")
@@ -194,11 +194,11 @@ class AuthContext:
         if decoded_token["type"] != self._token_type:
             raise JWTDecodeError(401, "Invalid token type")
 
-        if self._rules is not None and not any(rule in rules for rule in self._rules):
-            raise AuthJWTException(403, "Invalid user rule")
+        if self._roles is not None and not any(role in roles for role in self._roles):
+            raise AuthJWTException(403, "Invalid user role")
 
         return AuthData(
             jwt=auth_jwt,
             user=user,
-            rules=rules,
+            roles=roles,
         )

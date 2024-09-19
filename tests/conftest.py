@@ -5,19 +5,18 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.testclient import TestClient
 
-from fastapi_jwt_authlib.auth import AuthData, JWTUserData
+from fastapi_jwt_authlib.auth import AuthContext, AuthData, JWTUserData
 from fastapi_jwt_authlib.depends import (
     AuthAccessDepends,
     AuthDepends,
     AuthRefreshDepends,
-    auth_access_rules,
 )
 from fastapi_jwt_authlib.exception import AuthJWTException
 
-AuthAccessAdminDepends = Annotated[AuthData, Depends(auth_access_rules(["admin"]))]
-AuthAccessUsersDepends = Annotated[AuthData, Depends(auth_access_rules(["user1", "user2"]))]
-AuthAccessUser1Depends = Annotated[AuthData, Depends(auth_access_rules(["user1"]))]
-AuthAccessUser2Depends = Annotated[AuthData, Depends(auth_access_rules(["user2"]))]
+AuthAccessAdminDepends = Annotated[AuthData, Depends(AuthContext("access", ["admin"]))]
+AuthAccessUsersDepends = Annotated[AuthData, Depends(AuthContext("access", ["user1", "user2"]))]
+AuthAccessUser1Depends = Annotated[AuthData, Depends(AuthContext("access", ["user1"]))]
+AuthAccessUser2Depends = Annotated[AuthData, Depends(AuthContext("access", ["user2"]))]
 
 
 def create_example_client():
@@ -38,28 +37,28 @@ def create_example_client():
 
     @app.post("/login/admin")
     def login_admin(auth: AuthDepends):
-        jwt_data = JWTUserData(user=username, rules=["admin"])
+        jwt_data = JWTUserData(user=username, roles=["admin"])
         auth.generate_and_store_access_token(jwt_data)
         auth.generate_and_store_refresh_token(jwt_data)
         return {"msg": "Successful login"}
 
     @app.post("/login/users")
-    def login_rules(auth: AuthDepends):
-        jwt_data = JWTUserData(user=username, rules=["user1", "user2"])
+    def login_roles(auth: AuthDepends):
+        jwt_data = JWTUserData(user=username, roles=["user1", "user2"])
         auth.generate_and_store_access_token(jwt_data)
         auth.generate_and_store_refresh_token(jwt_data)
         return {"msg": "Successful login"}
 
     @app.post("/login/user1")
     def login_user1(auth: AuthDepends):
-        jwt_data = JWTUserData(user=username, rules=["user1"])
+        jwt_data = JWTUserData(user=username, roles=["user1"])
         auth.generate_and_store_access_token(jwt_data)
         auth.generate_and_store_refresh_token(jwt_data)
         return {"msg": "Successful login"}
 
     @app.post("/login/user2")
     def login_user2(auth: AuthDepends):
-        jwt_data = JWTUserData(user=username, rules=["user2"])
+        jwt_data = JWTUserData(user=username, roles=["user2"])
         auth.generate_and_store_access_token(jwt_data)
         auth.generate_and_store_refresh_token(jwt_data)
         return {"msg": "Successful login"}
@@ -78,23 +77,23 @@ def create_example_client():
 
     @app.get("/protected")
     def protected(auth: AuthAccessDepends):
-        return {"user": auth.user, "rules": auth.rules}
+        return {"user": auth.user, "roles": auth.roles}
 
     @app.get("/protected/admin")
     def protected_admin(auth: AuthAccessAdminDepends):
-        return {"user": auth.user, "rules": auth.rules}
+        return {"user": auth.user, "roles": auth.roles}
 
     @app.get("/protected/users")
     def protected_users(auth: AuthAccessUsersDepends):
-        return {"user": auth.user, "rules": auth.rules}
+        return {"user": auth.user, "roles": auth.roles}
 
     @app.get("/protected/user1")
     def protected_user1(auth: AuthAccessUser1Depends):
-        return {"user": auth.user, "rules": auth.rules}
+        return {"user": auth.user, "roles": auth.roles}
 
     @app.get("/protected/user2")
     def protected_user2(auth: AuthAccessUser2Depends):
-        return {"user": auth.user, "rules": auth.rules}
+        return {"user": auth.user, "roles": auth.roles}
 
     return TestClient(app)
 
