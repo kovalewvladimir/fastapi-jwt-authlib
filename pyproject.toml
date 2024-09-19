@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi-jwt-authlib"
-version = "0.3.0"
+version = "0.4.0"
 description = "A FastAPI JWT authentication library"
 authors = ["kovalew.vladimir <kovalew.vladimir@gmail.com>"]
 readme = "README.md"
