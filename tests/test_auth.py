@@ -209,7 +209,7 @@ def test_protected(client):
 
     response = client.get("/protected")
     assert response.status_code == 200, response.text
-    assert response.json() == {"user": "example"}
+    assert response.json() == {"user": "example", "rules": []}
 
 
 def test_protected_no_access_token(client):
@@ -263,6 +263,15 @@ def test_user1_protection_endpoint_users(client):
     assert response.json() == {"user": "example", "rules": ["user1"]}
 
 
+def test_user1_protection_endpoint_protected(client):
+    response = client.post("/login/user1")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected")
+    assert response.status_code == 200, response.text
+    assert response.json() == {"user": "example", "rules": ["user1"]}
+
+
 def test_user2_protection_endpoint_user1(client):
     response = client.post("/login/user2")
     assert response.status_code == 200, response.text
@@ -290,6 +299,15 @@ def test_user2_protection_endpoint_users(client):
     assert response.json() == {"user": "example", "rules": ["user2"]}
 
 
+def test_user2_protection_endpoint_protected(client):
+    response = client.post("/login/user2")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected")
+    assert response.status_code == 200, response.text
+    assert response.json() == {"user": "example", "rules": ["user2"]}
+
+
 def test_users_protection_endpoint_user1(client):
     response = client.post("/login/users")
     assert response.status_code == 200, response.text
@@ -313,5 +331,14 @@ def test_users_protection_endpoint_users(client):
     assert response.status_code == 200, response.text
 
     response = client.get("/protected/users")
+    assert response.status_code == 200, response.text
+    assert response.json() == {"user": "example", "rules": ["user1", "user2"]}
+
+
+def test_users_protection_endpoint_protected(client):
+    response = client.post("/login/users")
+    assert response.status_code == 200, response.text
+
+    response = client.get("/protected")
     assert response.status_code == 200, response.text
     assert response.json() == {"user": "example", "rules": ["user1", "user2"]}

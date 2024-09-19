@@ -15,6 +15,7 @@ from fastapi_jwt_authlib.depends import (
 from fastapi_jwt_authlib.exception import AuthJWTException
 
 AuthAccessAdminDepends = Annotated[AuthData, Depends(auth_access_rules(["admin"]))]
+AuthAccessUsersDepends = Annotated[AuthData, Depends(auth_access_rules(["user1", "user2"]))]
 AuthAccessUser1Depends = Annotated[AuthData, Depends(auth_access_rules(["user1"]))]
 AuthAccessUser2Depends = Annotated[AuthData, Depends(auth_access_rules(["user2"]))]
 
@@ -77,14 +78,14 @@ def create_example_client():
 
     @app.get("/protected")
     def protected(auth: AuthAccessDepends):
-        return {"user": auth.user}
+        return {"user": auth.user, "rules": auth.rules}
 
     @app.get("/protected/admin")
     def protected_admin(auth: AuthAccessAdminDepends):
         return {"user": auth.user, "rules": auth.rules}
 
     @app.get("/protected/users")
-    def protected_users(auth: AuthAccessDepends):
+    def protected_users(auth: AuthAccessUsersDepends):
         return {"user": auth.user, "rules": auth.rules}
 
     @app.get("/protected/user1")
