@@ -16,7 +16,7 @@
 				"ms-python.pylint",
 				"ms-python.black-formatter",
 				"ms-python.isort",
-				"donjayamanne.python-environment-manager",
+				"ms-python.vscode-python-envs",
 				"tamasfe.even-better-toml",
 
 				// Словари для проверки орфографии
