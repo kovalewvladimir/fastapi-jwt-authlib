@@ -48,7 +48,7 @@ class AuthJWT:
         self._response = response
 
     @classmethod
-    def config(
+    def config(  # pylint: disable=too-many-arguments
         cls,
         *,
         secret_key: str,
