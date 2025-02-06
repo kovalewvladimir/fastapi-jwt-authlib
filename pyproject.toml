@@ -41,7 +41,7 @@ disable = ["C0114", "C0115", "C0116", "R0903"]
 init-hook = 'import sys; sys.path.append("./app");'
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.13"
 # disallow_untyped_defs = "True"
 ignore_missing_imports = true
 
