@@ -9,23 +9,23 @@ homepage = "https://github.com/kovalewvladimir/fastapi-jwt-authlib"
 repository = "https://github.com/kovalewvladimir/fastapi-jwt-authlib"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.12 <4.0"
 
-fastapi = "^0.114.1"
-pyjwt = "^2.9.0"
+fastapi = ">=0.114.0 <1.0.0"
+pyjwt = "2.9.0"
 
 [tool.poetry.group.dev.dependencies]
 # Форматирование кода
-black = "^24.4.2"
+black = "25.1.0"
 
 # Линтеры
-mypy = "^1.11.1"
-pylint = "^3.2.6"
+mypy = "1.15.0"
+pylint = "3.3.4"
 
 # Для тестов
-pytest = "^8.3.2"
-pytest-asyncio = "^0.24.0"
-httpx = "^0.27.0"
+pytest = "8.3.4"
+pytest-asyncio = "0.25.3"
+httpx = "0.28.1"
 
 [build-system]
 requires = ["poetry-core"]
