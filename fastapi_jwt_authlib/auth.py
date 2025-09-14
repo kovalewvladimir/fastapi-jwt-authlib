@@ -164,10 +164,20 @@ class AuthJWT:
         self._set_refresh_cookies(token)
 
     def unset_access_cookies(self):
-        self._response.delete_cookie(self._cookie_access_key, path=self._cookie_access_path)
+        self._response.delete_cookie(
+            self._cookie_access_key,
+            path=self._cookie_access_path,
+            secure=self._cookie_secure,
+            httponly=True,
+        )
 
     def unset_refresh_cookies(self):
-        self._response.delete_cookie(self._cookie_refresh_key, path=self._cookie_refresh_path)
+        self._response.delete_cookie(
+            self._cookie_refresh_key,
+            path=self._cookie_refresh_path,
+            secure=self._cookie_secure,
+            httponly=True,
+        )
 
     def unset_cookies(self):
         self.unset_access_cookies()
