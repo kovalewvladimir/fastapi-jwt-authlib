@@ -1,25 +1,17 @@
 {
   "[python]": {
-    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit"
     },
   },
 
-  "isort.args": [
-    "--profile",
-    "black"
-  ],
-
   "files.exclude": {
     "**/__pycache__": true
   },
 
   "editor.tabSize": 4,
-
-  "git.openRepositoryInParentFolders": "always",
-
 
   "python.testing.pytestArgs": [
     "."
@@ -38,5 +30,5 @@
   "python.analysis.autoSearchPaths": true,
   // "python.analysis.autoImportCompletions": true,
   "python.analysis.completeFunctionParens": true,
-  "python.analysis.enablePytestSupport": true,
+  "python.analysis.enablePytestSupport": true
 }
