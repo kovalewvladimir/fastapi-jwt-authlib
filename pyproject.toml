@@ -1,38 +1,79 @@
-[tool.poetry]
+[project]
 name = "fastapi-jwt-authlib"
 version = "0.8.0"
 description = "A FastAPI JWT authentication library"
-authors = ["kovalew.vladimir <kovalew.vladimir@gmail.com>"]
+authors = [{ name = "kovalew.vladimir", email = "kovalew.vladimir@gmail.com" }]
 readme = "README.md"
 license = "MIT"
-homepage = "https://github.com/kovalewvladimir/fastapi-jwt-authlib"
-repository = "https://github.com/kovalewvladimir/fastapi-jwt-authlib"
+requires-python = ">=3.13,<4.0"
 
-[tool.poetry.dependencies]
-python = ">=3.12 <4.0"
+dependencies = [
+    "fastapi~=0.114",
+    "pyjwt==2.9.0"
+]
 
-fastapi = ">=0.114.0 <1.0.0"
-pyjwt = "2.9.0"
+[dependency-groups]
+lint = [
+    "mypy==1.18.2", 
+    "pylint==4.0.2", 
+    "ruff==0.14.2",
+]
+test = [
+    "faker==37.12.0",
+    "pytest==8.4.2",
+    "pytest-asyncio==1.2.0",
+    "pytest-cov==7.0.0",
+    "pytest-env==1.2.0",
+    "httpx==0.28.1"
+]
 
-[tool.poetry.group.dev.dependencies]
-# Форматирование кода
-black = "25.1.0"
-
-# Линтеры
-mypy = "1.15.0"
-pylint = "3.3.4"
-
-# Для тестов
-pytest = "8.3.4"
-pytest-asyncio = "0.25.3"
-httpx = "0.28.1"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.black]
+[tool.ruff]
 line-length = 120
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "ANN201", # Проверяет, что публичные функции и методы имеют аннотации типа возвращаемого значения
+    "ANN202", # Проверяет, что частные функции и методы имеют аннотации типа возвращаемого значения
+    "ANN204", # Проверяет, что методы, такие как __init__, __new__ и __call__, имеют аннотации типа возвращаемого значения
+    "ANN401", # Проверяет, аннотированы ли аргументы функции более конкретным типом, чем Any
+
+    "RUF001", # Проверяет наличие неоднозначных символов Unicode в строках
+    "RUF002", # Проверяет наличие неоднозначных символов Unicode в строках документации
+    "RUF003", # Проверяет наличие неоднозначных символов Unicode в комментариях
+
+    "INP001", # Проверяет наличие пакетов, в которых отсутствует файл __init__.py
+
+    "ERA001", # Проверяет наличие закомментированного кода Python
+
+    "D100", # Проверяет наличие недокументированных публичных модулей
+    "D101", # Проверяет наличие недокументированных публичных классов
+    "D102", # Проверяет наличие недокументированных публичных методов
+    "D103", # Проверяет наличие недокументированных публичных функций
+    "D104", # Проверяет наличие недокументированных публичных определений пакетов
+    "D105", # Проверяет наличие недокументированных определений магических методов
+    "D107", # Проверяет наличие недокументированных методов __init__
+    "D203", # Проверяет наличие строк документации в определениях классов, которым не предшествует пустая строка
+    "D212", # Проверяет наличие строк документации, которые не расположены на первой физической строке документации
+    "D400", # Проверяет наличие строк документации, в которых первая строка не заканчивается точкой
+    "D415", # Проверяет наличие строк документации, в которых первая строка не заканчивается знаком препинания, например точкой, вопросительным знаком или восклицательным знаком
+
+    "TC003", # Проверяет импорт стандартной библиотеки, который используется только для аннотаций типов, но не определен в блоке проверки типов
+
+    "TD002", # Проверяет, указан ли автор комментария TODO
+    "TD003", # Проверяет, связан ли комментарий TODO со ссылкой на соответствующую проблему или тикет
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/*.py" = [
+    "ANN", # Игнорирует аннотации типов
+
+    "S101", # Проверяет использование ключевого слова assert
+    "S311", # Проверяет использование криптографически слабых генераторов псевдослучайных чисел
+
+    "PLR2004", # Проверяет использование неименованных числовых констант («магических») значений в сравнениях
+]
+
 
 [tool.pylint]
 jobs = 4
@@ -42,12 +83,13 @@ init-hook = 'import sys; sys.path.append("./fastapi_jwt_authlib");'
 
 [tool.mypy]
 python_version = "3.13"
-# disallow_untyped_defs = "True"
+# disallow_untyped_defs = true
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
 disable_test_id_escaping_and_forfeit_all_rights_to_community_support = "True"
 
 [tool.pytest_env]

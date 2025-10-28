@@ -14,17 +14,22 @@
 				// для работы на Python
 				"ms-python.python",
 				"ms-python.pylint",
-				"ms-python.black-formatter",
-				"ms-python.isort",
+				"charliermarsh.ruff",
 				"ms-python.vscode-python-envs",
 				"tamasfe.even-better-toml",
+
+				// sqlite
+				"yy0931.vscode-sqlite3-editor",
 
 				// Словари для проверки орфографии
 				"streetsidesoftware.code-spell-checker",
 				"streetsidesoftware.code-spell-checker-russian",
 
 				// git
-				"donjayamanne.githistory"
+				"donjayamanne.githistory",
+				
+				// Показывает последнии версии пакетов pip
+				"twixes.pypi-assistant"
 			]
 		}
 	}
