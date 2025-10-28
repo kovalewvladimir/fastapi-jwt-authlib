@@ -140,8 +140,8 @@ def test_logout(client):
     cookies = SimpleCookie()
     cookies.load(response.headers["set-cookie"])
 
-    access_key = AuthJWT._cookie_access_key  # pylint: disable=protected-access
-    refresh_key = AuthJWT._cookie_refresh_key  # pylint: disable=protected-access
+    access_key = AuthJWT.get_cookie_access_key()
+    refresh_key = AuthJWT.get_cookie_refresh_key()
 
     access_token_cookie = cookies[access_key]
     assert access_token_cookie.value == ""
@@ -159,8 +159,8 @@ def test_cookies_secure(client):
     cookies = SimpleCookie()
     cookies.load(response.headers["set-cookie"])
 
-    access_key = AuthJWT._cookie_access_key  # pylint: disable=protected-access
-    refresh_key = AuthJWT._cookie_refresh_key  # pylint: disable=protected-access
+    access_key = AuthJWT.get_cookie_access_key()
+    refresh_key = AuthJWT.get_cookie_refresh_key()
 
     access_token_cookie = cookies[access_key]
     assert access_token_cookie["httponly"]
@@ -178,12 +178,12 @@ def test_cookies_value_lifetime(client):
     cookies = SimpleCookie()
     cookies.load(response.headers["set-cookie"])
 
-    access_key = AuthJWT._cookie_access_key  # pylint: disable=protected-access
-    refresh_key = AuthJWT._cookie_refresh_key  # pylint: disable=protected-access
-    secret_key = AuthJWT._secret_key  # pylint: disable=protected-access
-    algorithm = AuthJWT._algorithm  # pylint: disable=protected-access
-    token_access_lifetime = AuthJWT._token_access_lifetime  # pylint: disable=protected-access
-    token_refresh_lifetime = AuthJWT._token_refresh_lifetime  # pylint: disable=protected-access
+    access_key = AuthJWT.get_cookie_access_key()
+    refresh_key = AuthJWT.get_cookie_refresh_key()
+    secret_key = AuthJWT._secret_key  # pylint: disable=protected-access  # noqa: SLF001
+    algorithm = AuthJWT.get_algorithm()
+    token_access_lifetime = AuthJWT.get_token_access_lifetime()
+    token_refresh_lifetime = AuthJWT.get_token_refresh_lifetime()
 
     access_token_cookie = cookies[access_key]
     decoded_access_token = jwt.decode(access_token_cookie.value, secret_key, algorithms=[algorithm])
@@ -353,8 +353,8 @@ def test_unset_cookies(client):
     cookies = SimpleCookie()
     cookies.load(response.headers["set-cookie"])
 
-    access_key = AuthJWT._cookie_access_key  # pylint: disable=protected-access
-    refresh_key = AuthJWT._cookie_refresh_key  # pylint: disable=protected-access
+    access_key = AuthJWT.get_cookie_access_key()
+    refresh_key = AuthJWT.get_cookie_refresh_key()
 
     assert access_key in cookies
     assert refresh_key in cookies
@@ -372,11 +372,11 @@ def test_unset_cookies(client):
     access_token_cookie = cookies[access_key]
     assert access_token_cookie.value == ""
     assert access_token_cookie["max-age"] == "0"
-    assert access_token_cookie["path"] == AuthJWT._cookie_access_path  # pylint: disable=protected-access
+    assert access_token_cookie["path"] == AuthJWT.get_cookie_access_path()
     assert access_token_cookie["httponly"]
 
     refresh_token_cookie = cookies[refresh_key]
     assert refresh_token_cookie.value == ""
     assert refresh_token_cookie["max-age"] == "0"
-    assert refresh_token_cookie["path"] == AuthJWT._cookie_refresh_path  # pylint: disable=protected-access
+    assert refresh_token_cookie["path"] == AuthJWT.get_cookie_refresh_path()
     assert refresh_token_cookie["httponly"]

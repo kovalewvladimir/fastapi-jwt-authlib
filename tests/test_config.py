@@ -31,7 +31,7 @@ def test_config_algorithm_variations():
     """Test config with different algorithm values."""
     for algo in ["HS256", "HS384", "HS512"]:
         AuthJWT.config(secret_key="test", algorithm=algo)  # noqa: S106
-        assert AuthJWT._algorithm == algo  # pylint: disable=protected-access  # noqa: SLF001
+        assert AuthJWT.get_algorithm() == algo
 
 
 def test_config_zero_token_lifetimes():
@@ -41,8 +41,8 @@ def test_config_zero_token_lifetimes():
         token_access_lifetime=0,
         token_refresh_lifetime=0,
     )
-    assert AuthJWT._token_access_lifetime == 0  # pylint: disable=protected-access
-    assert AuthJWT._token_refresh_lifetime == 0  # pylint: disable=protected-access
+    assert AuthJWT.get_token_access_lifetime() == 0
+    assert AuthJWT.get_token_refresh_lifetime() == 0
 
 
 def test_config_negative_token_lifetimes():
@@ -52,5 +52,5 @@ def test_config_negative_token_lifetimes():
         token_access_lifetime=-100,
         token_refresh_lifetime=-1000,
     )
-    assert AuthJWT._token_access_lifetime == -100  # pylint: disable=protected-access
-    assert AuthJWT._token_refresh_lifetime == -1000  # pylint: disable=protected-access
+    assert AuthJWT.get_token_access_lifetime() == -100
+    assert AuthJWT.get_token_refresh_lifetime() == -1000

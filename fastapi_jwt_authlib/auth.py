@@ -73,6 +73,38 @@ class AuthJWT:
         cls._token_access_lifetime = default_if_none(token_access_lifetime, cls._token_access_lifetime)
         cls._token_refresh_lifetime = default_if_none(token_refresh_lifetime, cls._token_refresh_lifetime)
 
+    @classmethod
+    def get_algorithm(cls) -> str:
+        return cls._algorithm
+
+    @classmethod
+    def get_cookie_access_key(cls) -> str:
+        return cls._cookie_access_key
+
+    @classmethod
+    def get_cookie_refresh_key(cls) -> str:
+        return cls._cookie_refresh_key
+
+    @classmethod
+    def get_cookie_access_path(cls) -> str:
+        return cls._cookie_access_path
+
+    @classmethod
+    def get_cookie_refresh_path(cls) -> str:
+        return cls._cookie_refresh_path
+
+    @classmethod
+    def get_cookie_secure(cls) -> bool:
+        return cls._cookie_secure
+
+    @classmethod
+    def get_token_access_lifetime(cls) -> int:
+        return cls._token_access_lifetime
+
+    @classmethod
+    def get_token_refresh_lifetime(cls) -> int:
+        return cls._token_refresh_lifetime
+
     def _get_jwt_identifier(self) -> str:
         return str(uuid4())
 
