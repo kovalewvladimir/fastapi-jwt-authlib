@@ -24,6 +24,21 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Установка uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Обновить номер версии
+        run: |
+          uv version ${{ github.event.inputs.version_number }}
+      
+      - name: Закоммитить изменения версии
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pyproject.toml uv.lock
+          git commit -m "New: Новая версия ${{ github.event.inputs.version_number }}"
+          git push
+
       - name: Получить изменения для релиза
         run: |
           git fetch --tags
