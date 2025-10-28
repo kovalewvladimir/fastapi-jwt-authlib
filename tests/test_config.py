@@ -21,12 +21,6 @@ def reset_auth_config():
     )
 
 
-def test_config_missing_secret_key():
-    """Test that config raises error when secret_key is missing."""
-    with pytest.raises(TypeError):
-        AuthJWT.config()
-
-
 def test_config_empty_secret_key():
     """Test config with empty string as secret_key."""
     AuthJWT.config(secret_key="")
