@@ -19,7 +19,7 @@ jobs:
       TAG: ${{ github.event.inputs.version_number }}
       RELEASE_NAME: ${{ github.event.inputs.version_number }}
     steps:
-      - name: Получить исходный код
+      - name: Получение исходного кода
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -27,11 +27,11 @@ jobs:
       - name: Установка uv
         uses: astral-sh/setup-uv@v7
 
-      - name: Обновить номер версии
+      - name: Обновление номера версии
         run: |
           uv version ${{ github.event.inputs.version_number }}
       
-      - name: Закоммитить изменения версии
+      - name: Фиксация изменений версии
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -39,7 +39,7 @@ jobs:
           git commit -m "New: Новая версия ${{ github.event.inputs.version_number }}"
           git push
 
-      - name: Получить изменения для релиза
+      - name: Подготовка описания релиза
         run: |
           git fetch --tags
           PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
@@ -52,12 +52,12 @@ jobs:
             git log --pretty=format:"- [%s]($REPO_URL/commit/%H)" > release_notes.txt
           fi
 
-      - name: Вывод информации о релизе
+      - name: Вывод описания релиза
         run: |
           echo "Release notes:"
           cat release_notes.txt
 
-      - name: Создать новый тег и релиз
+      - name: Создание тега и релиза
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}

@@ -1,4 +1,4 @@
-name: Publish to PyPI
+name: Публикация в PyPI
 
 on:
   workflow_run:
@@ -10,19 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Получение исходного кода
       uses: actions/checkout@v4
 
-    - name: Install uv
+    - name: Установка uv
       uses: astral-sh/setup-uv@v4
 
-    - name: Set up Python
+    - name: Установка Python
       run: uv python install
 
-    - name: Build package
+    - name: Сборка пакета
       run: uv build
 
-    - name: Publish to PyPI
+    - name: Публикация в PyPI
       run: uv publish
       env:
         UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
