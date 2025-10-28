@@ -13,13 +13,6 @@ jobs:
     - name: Получение исходного кода
       uses: actions/checkout@v4
 
-    - name: Получение версии из коммита
-      id: version
-      run: |
-        VERSION=$(git log -1 --pretty=%B | grep -oP 'версия \K[0-9.]+' || echo "unknown")
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "Публикация версии $VERSION" >> $GITHUB_STEP_SUMMARY
-
     - name: Установка uv
       uses: astral-sh/setup-uv@v4
 
