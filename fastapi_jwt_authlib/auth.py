@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Literal
 from uuid import uuid4
 
@@ -8,7 +8,7 @@ from fastapi import Response
 from fastapi.requests import HTTPConnection
 
 from fastapi_jwt_authlib.exception import (
-    AuthJWTException,
+    AuthJWTError,
     JWTDecodeError,
     MissingTokenError,
 )
@@ -48,7 +48,7 @@ class AuthJWT:
         self._response = response
 
     @classmethod
-    def config(  # pylint: disable=too-many-arguments
+    def config(  # pylint: disable=too-many-arguments  # noqa: PLR0913
         cls,
         *,
         secret_key: str,
@@ -60,7 +60,7 @@ class AuthJWT:
         cookie_secure: bool | None = None,
         token_access_lifetime: int | None = None,
         token_refresh_lifetime: int | None = None,
-    ):
+    ) -> None:
         cls._secret_key = secret_key
         cls._algorithm = default_if_none(algorithm, cls._algorithm)
 
@@ -77,7 +77,7 @@ class AuthJWT:
         return str(uuid4())
 
     def _get_int_from_datetime_now(self) -> int:
-        return int(datetime.now(timezone.utc).timestamp())
+        return int(datetime.now(UTC).timestamp())
 
     def _create_token(self, data: JWTUserData, token_type: TokenTypes) -> str:
         match token_type:
@@ -86,10 +86,11 @@ class AuthJWT:
             case "refresh":
                 lifetime = self._token_refresh_lifetime
             case _:
-                raise ValueError("Invalid token type")
+                msg = "Invalid token type"
+                raise ValueError(msg)
 
         payload_user = data.__dict__
-        if token_type == "refresh":
+        if token_type == "refresh":  # noqa: S105
             payload_user.pop("roles")
 
         payload = payload_user | {
@@ -99,13 +100,11 @@ class AuthJWT:
             "exp": self._get_int_from_datetime_now() + lifetime,
             "type": token_type,
         }
-        token = jwt.encode(
+        return jwt.encode(
             payload=payload,
             key=self._secret_key,
             algorithm=self._algorithm,
         )
-
-        return token
 
     def _set_cookie(self, key: str, value: str, expires: int, path: str):
         self._response.set_cookie(
@@ -140,7 +139,8 @@ class AuthJWT:
             case "refresh":
                 key = self._cookie_refresh_key
             case _:
-                raise ValueError("Invalid token type")
+                msg = "Invalid token type"
+                raise ValueError(msg)
 
         token = self._request.cookies.get(key)
         if token is None:
@@ -196,7 +196,7 @@ class AuthContext:
         auth_jwt = AuthJWT(request, response)
         decoded_token = auth_jwt.decode_token(self._token_type)
         user = decoded_token.get("user")
-        roles = decoded_token.get("roles", tuple())
+        roles = decoded_token.get("roles", ())
 
         if user is None:
             raise JWTDecodeError(401, "Invalid user")
@@ -205,7 +205,7 @@ class AuthContext:
             raise JWTDecodeError(401, "Invalid token type")
 
         if self._roles is not None and not any(role in roles for role in self._roles):
-            raise AuthJWTException(403, "Invalid user role")
+            raise AuthJWTError(403, "Invalid user role")
 
         return AuthData(
             jwt=auth_jwt,

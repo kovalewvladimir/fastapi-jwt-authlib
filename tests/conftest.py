@@ -11,7 +11,7 @@ from fastapi_jwt_authlib.depends import (
     AuthDepends,
     AuthRefreshDepends,
 )
-from fastapi_jwt_authlib.exception import AuthJWTException
+from fastapi_jwt_authlib.exception import AuthJWTError
 
 AuthAccessAdminDepends = Annotated[AuthData, Depends(AuthContext("access", ["admin"]))]
 AuthAccessUsersDepends = Annotated[AuthData, Depends(AuthContext("access", ["user1", "user2"]))]
@@ -24,8 +24,8 @@ def create_example_client():
 
     username = "example"
 
-    @app.exception_handler(AuthJWTException)
-    def authjwt_exception_handler(_request: Request, exc: AuthJWTException):
+    @app.exception_handler(AuthJWTError)
+    def authjwt_exception_handler(_request: Request, exc: AuthJWTError):
         return JSONResponse(status_code=exc.status_code, content={"error": {"detail": exc.message}})
 
     @app.post("/login")
