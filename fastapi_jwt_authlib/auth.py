@@ -114,6 +114,7 @@ class AuthJWT:
             path=path,
             secure=self._cookie_secure,
             httponly=True,
+            samesite="lax",
         )
 
     def _set_access_cookies(self, token: str):
@@ -169,6 +170,7 @@ class AuthJWT:
             path=self._cookie_access_path,
             secure=self._cookie_secure,
             httponly=True,
+            samesite="lax",
         )
 
     def unset_refresh_cookies(self):
@@ -177,6 +179,7 @@ class AuthJWT:
             path=self._cookie_refresh_path,
             secure=self._cookie_secure,
             httponly=True,
+            samesite="lax",
         )
 
     def unset_cookies(self):
