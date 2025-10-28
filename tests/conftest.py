@@ -65,8 +65,7 @@ def create_example_client():
 
     @app.delete("/logout")
     def logout(auth: AuthDepends):
-        auth.unset_access_cookies()
-        auth.unset_refresh_cookies()
+        auth.unset_cookies()
         return {"msg": "Successful logout"}
 
     @app.post("/refresh")

@@ -342,3 +342,41 @@ def test_users_protection_endpoint_protected(client):
     response = client.get("/protected")
     assert response.status_code == 200, response.text
     assert response.json() == {"user": "example", "roles": ["user1", "user2"]}
+
+
+def test_unset_cookies(client):
+    # First login to set cookies
+    response = client.post("/login")
+    assert response.status_code == 200, response.text
+
+    # Verify cookies are set
+    cookies = SimpleCookie()
+    cookies.load(response.headers["set-cookie"])
+
+    access_key = AuthJWT._cookie_access_key  # pylint: disable=protected-access
+    refresh_key = AuthJWT._cookie_refresh_key  # pylint: disable=protected-access
+
+    assert access_key in cookies
+    assert refresh_key in cookies
+    assert cookies[access_key].value != ""
+    assert cookies[refresh_key].value != ""
+
+    # Now logout which calls unset_cookies()
+    response = client.delete("/logout")
+    assert response.status_code == 200, response.text
+
+    cookies = SimpleCookie()
+    cookies.load(response.headers["set-cookie"])
+
+    # Verify both cookies are unset
+    access_token_cookie = cookies[access_key]
+    assert access_token_cookie.value == ""
+    assert access_token_cookie["max-age"] == "0"
+    assert access_token_cookie["path"] == AuthJWT._cookie_access_path  # pylint: disable=protected-access
+    assert access_token_cookie["httponly"]
+
+    refresh_token_cookie = cookies[refresh_key]
+    assert refresh_token_cookie.value == ""
+    assert refresh_token_cookie["max-age"] == "0"
+    assert refresh_token_cookie["path"] == AuthJWT._cookie_refresh_path  # pylint: disable=protected-access
+    assert refresh_token_cookie["httponly"]
