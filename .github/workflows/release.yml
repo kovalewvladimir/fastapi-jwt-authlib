@@ -1,0 +1,54 @@
+name: Создание релиза
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_number:
+        description: 'Номер версии'
+        required: true
+        default: '0.0.0'
+
+env:
+  REGISTRY_HOST: github.com
+
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.inputs.version_number }}
+      RELEASE_NAME: ${{ github.event.inputs.version_number }}
+    steps:
+      - name: Получить исходный код
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Получить изменения для релиза
+        run: |
+          git fetch --tags
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          REPO_URL="http://${{ env.REGISTRY_HOST }}/${{ github.repository }}"
+
+          if [ -n "$PREV_TAG" ]; then
+            git log "$PREV_TAG"..HEAD --pretty=format:"- [%s]($REPO_URL/commit/%H)" > release_notes.txt
+            echo -e "\n\n[Сравнить изменения $PREV_TAG...${{ env.TAG }}]($REPO_URL/compare/$PREV_TAG...${{ env.TAG }})" >> release_notes.txt
+          else
+            git log --pretty=format:"- [%s]($REPO_URL/commit/%H)" > release_notes.txt
+          fi
+
+      - name: Вывод информации о релизе
+        run: |
+          echo "Release notes:"
+          cat release_notes.txt
+
+      - name: Создать новый тег и релиз
+        uses: comnoco/create-release-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.TAG }}
+          release_name: ${{ env.RELEASE_NAME }}
+          body_path: release_notes.txt
+          draft: false
+          prerelease: false
