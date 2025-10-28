@@ -9,7 +9,7 @@ def reset_auth_config():
     yield
     # Reset to defaults after each test
     AuthJWT.config(
-        secret_key="test_secret",
+        secret_key="test_secret",  # noqa: S106
         algorithm="HS256",
         cookie_access_key="__Host-access_token",
         cookie_refresh_key="__Host-refresh_token",
@@ -30,20 +30,20 @@ def test_config_missing_secret_key():
 def test_config_empty_secret_key():
     """Test config with empty string as secret_key."""
     AuthJWT.config(secret_key="")
-    assert AuthJWT._secret_key == ""  # pylint: disable=protected-access
+    assert AuthJWT._secret_key == ""  # pylint: disable=protected-access  # noqa: SLF001
 
 
 def test_config_algorithm_variations():
     """Test config with different algorithm values."""
     for algo in ["HS256", "HS384", "HS512"]:
-        AuthJWT.config(secret_key="test", algorithm=algo)
-        assert AuthJWT._algorithm == algo  # pylint: disable=protected-access
+        AuthJWT.config(secret_key="test", algorithm=algo)  # noqa: S106
+        assert AuthJWT._algorithm == algo  # pylint: disable=protected-access  # noqa: SLF001
 
 
 def test_config_zero_token_lifetimes():
     """Test config with zero token lifetimes."""
     AuthJWT.config(
-        secret_key="test",
+        secret_key="test",  # noqa: S106
         token_access_lifetime=0,
         token_refresh_lifetime=0,
     )
@@ -54,7 +54,7 @@ def test_config_zero_token_lifetimes():
 def test_config_negative_token_lifetimes():
     """Test config with negative token lifetimes."""
     AuthJWT.config(
-        secret_key="test",
+        secret_key="test",  # noqa: S106
         token_access_lifetime=-100,
         token_refresh_lifetime=-1000,
     )

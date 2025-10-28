@@ -19,7 +19,7 @@ AuthAccessUser1Depends = Annotated[AuthData, Depends(AuthContext("access", ["use
 AuthAccessUser2Depends = Annotated[AuthData, Depends(AuthContext("access", ["user2"]))]
 
 
-def create_example_client():
+def create_example_client():  # noqa: C901
     app = FastAPI()
 
     username = "example"
