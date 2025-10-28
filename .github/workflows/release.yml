@@ -1,4 +1,5 @@
 name: Создание релиза
+run-name: Создание релиза ${{ github.event.inputs.version_number }}
 
 on:
   workflow_dispatch:
