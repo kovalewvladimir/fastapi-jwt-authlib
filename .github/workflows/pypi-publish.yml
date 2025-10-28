@@ -1,8 +1,9 @@
 name: Publish to PyPI
 
 on:
-  release:
-    types: [created, published]
+  workflow_run:
+    workflows: ["Создание релиза"]
+    types: [completed]
 
 jobs:
   build:
