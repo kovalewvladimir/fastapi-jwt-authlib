@@ -1,4 +1,5 @@
 name: Публикация в PyPI
+run-name: Публикация версии ${{ github.event.workflow_run.head_branch }}
 
 on:
   workflow_run:
