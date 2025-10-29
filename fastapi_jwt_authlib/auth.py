@@ -26,6 +26,7 @@ class JWTUserData:
 @dataclass
 class AuthData:
     jwt: "AuthJWT"
+    exp: datetime
     user: str
     roles: list[str]
 
@@ -232,6 +233,11 @@ class AuthContext:
         decoded_token = auth_jwt.decode_token(self._token_type)
         user = decoded_token.get("user")
         roles = decoded_token.get("roles", ())
+        exp = decoded_token.get("exp", "0")
+        try:
+            exp = datetime.fromtimestamp(int(exp), UTC)
+        except Exception as err:
+            raise JWTDecodeError(422, "Invalid exp claim") from err
 
         if user is None:
             raise JWTDecodeError(401, "Invalid user")
@@ -244,6 +250,7 @@ class AuthContext:
 
         return AuthData(
             jwt=auth_jwt,
+            exp=exp,
             user=user,
             roles=roles,
         )
