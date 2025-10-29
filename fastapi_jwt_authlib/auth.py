@@ -221,9 +221,9 @@ class AuthJWT:
 
 class AuthContext:
     _token_type: TokenTypes
-    _roles: tuple[str] | None
+    _roles: tuple[str, ...] | None
 
-    def __init__(self, token_type: TokenTypes, roles: tuple[str] | None = None):
+    def __init__(self, token_type: TokenTypes, roles: tuple[str, ...] | None = None):
         self._token_type = token_type
         self._roles = roles
 

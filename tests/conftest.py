@@ -13,10 +13,10 @@ from fastapi_jwt_authlib.depends import (
 )
 from fastapi_jwt_authlib.exception import AuthJWTError
 
-AuthAccessAdminDepends = Annotated[AuthData, Depends(AuthContext("access", ["admin"]))]
-AuthAccessUsersDepends = Annotated[AuthData, Depends(AuthContext("access", ["user1", "user2"]))]
-AuthAccessUser1Depends = Annotated[AuthData, Depends(AuthContext("access", ["user1"]))]
-AuthAccessUser2Depends = Annotated[AuthData, Depends(AuthContext("access", ["user2"]))]
+AuthAccessAdminDepends = Annotated[AuthData, Depends(AuthContext("access", ("admin",)))]
+AuthAccessUsersDepends = Annotated[AuthData, Depends(AuthContext("access", ("user1", "user2")))]
+AuthAccessUser1Depends = Annotated[AuthData, Depends(AuthContext("access", ("user1",)))]
+AuthAccessUser2Depends = Annotated[AuthData, Depends(AuthContext("access", ("user2",)))]
 
 
 def create_example_client():  # noqa: C901
