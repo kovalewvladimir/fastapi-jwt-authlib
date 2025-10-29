@@ -12,6 +12,6 @@ AuthAccessDepends = Annotated[AuthData, Depends(AuthAccess)]
 AuthRefreshDepends = Annotated[AuthData, Depends(AuthRefresh)]
 
 
-def create_access_role_dependency(roles: tuple[str]):
+def create_access_role_dependency(roles: tuple[str, ...]):
     """Фабрика для создания зависимости с проверкой роли"""
     return Depends(AuthContext("access", roles))

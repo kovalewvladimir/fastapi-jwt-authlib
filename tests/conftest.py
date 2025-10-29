@@ -1,22 +1,23 @@
 from typing import Annotated
 
 import pytest
-from fastapi import Depends, FastAPI, Request
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.testclient import TestClient
 
-from fastapi_jwt_authlib.auth import AuthContext, AuthData, JWTUserData
+from fastapi_jwt_authlib.auth import AuthData, JWTUserData
 from fastapi_jwt_authlib.depends import (
     AuthAccessDepends,
     AuthDepends,
     AuthRefreshDepends,
+    create_access_role_dependency,
 )
 from fastapi_jwt_authlib.exception import AuthJWTError
 
-AuthAccessAdminDepends = Annotated[AuthData, Depends(AuthContext("access", ("admin",)))]
-AuthAccessUsersDepends = Annotated[AuthData, Depends(AuthContext("access", ("user1", "user2")))]
-AuthAccessUser1Depends = Annotated[AuthData, Depends(AuthContext("access", ("user1",)))]
-AuthAccessUser2Depends = Annotated[AuthData, Depends(AuthContext("access", ("user2",)))]
+AuthAccessAdminDepends = Annotated[AuthData, create_access_role_dependency(("admin",))]
+AuthAccessUsersDepends = Annotated[AuthData, create_access_role_dependency(("user1", "user2"))]
+AuthAccessUser1Depends = Annotated[AuthData, create_access_role_dependency(("user1",))]
+AuthAccessUser2Depends = Annotated[AuthData, create_access_role_dependency(("user2",))]
 
 
 def create_example_client():  # noqa: C901
