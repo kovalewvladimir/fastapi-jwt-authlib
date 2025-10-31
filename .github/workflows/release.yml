@@ -30,7 +30,8 @@ jobs:
 
       - name: Обновление номера версии
         run: |
-          uv version ${{ github.event.inputs.version_number }}
+          sed -i "s/^version = .*/version = \"${{ github.event.inputs.version_number }}\"/" pyproject.toml
+          uv lock
       
       - name: Фиксация изменений версии
         run: |
