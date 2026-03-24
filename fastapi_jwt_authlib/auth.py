@@ -185,7 +185,7 @@ class AuthJWT:
         except jwt.ExpiredSignatureError as err:
             raise JWTDecodeError(status_code=401, message=str(err)) from err
         except Exception as err:
-            raise JWTDecodeError(status_code=422, message=str(err)) from err
+            raise JWTDecodeError(status_code=401, message=str(err)) from err
 
         return decoded_token
 
@@ -237,7 +237,7 @@ class AuthContext:
         try:
             exp = datetime.fromtimestamp(int(exp), UTC)
         except Exception as err:
-            raise JWTDecodeError(422, "Invalid exp claim") from err
+            raise JWTDecodeError(401, "Invalid exp claim") from err
 
         if user is None:
             raise JWTDecodeError(401, "Invalid user")
