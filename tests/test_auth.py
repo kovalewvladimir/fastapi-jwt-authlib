@@ -1,8 +1,28 @@
 from http.cookies import SimpleCookie
 
 import jwt
+import pytest
 
 from fastapi_jwt_authlib.auth import AuthJWT
+
+
+@pytest.fixture(autouse=True)
+def reset_auth_config():
+    """Reset AuthJWT config before each test to avoid state pollution."""
+    yield
+    # Reset to defaults after each test
+    AuthJWT.config(
+        secret_key="test_secret",  # noqa: S106
+        algorithm="HS256",
+        cookie_access_key="__Host-access_token",
+        cookie_refresh_key="__Http-refresh_token",
+        cookie_access_path="/",
+        cookie_refresh_path="/",
+        cookie_secure=False,
+        token_access_lifetime=15 * 60,
+        token_refresh_lifetime=2 * 24 * 60 * 60,
+    )
+
 
 openapi_schema = {
     "openapi": "3.1.0",

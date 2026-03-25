@@ -36,10 +36,10 @@ class AuthJWT:
     _algorithm: str = "HS256"
 
     _cookie_access_key: str = "__Host-access_token"
-    _cookie_refresh_key: str = "__Host-refresh_token"
+    _cookie_refresh_key: str = "__Http-refresh_token"
     _cookie_access_path: str = "/"
     _cookie_refresh_path: str = "/"
-    _cookie_secure: bool = False
+    _cookie_secure: bool = True
 
     _token_access_lifetime: int = 15 * 60  # 15 minutes
     _token_refresh_lifetime: int = 2 * 24 * 60 * 60  # 1 day
