@@ -1,4 +1,4 @@
-from fastapi_jwt_authlib.auth import AuthJWT
+from fastapi_jwt_authlib.auth import AuthJWT, SameSiteTypes
 
 
 def test_config_empty_secret_key():
@@ -34,3 +34,17 @@ def test_config_negative_token_lifetimes():
     )
     assert AuthJWT.get_token_access_lifetime() == -100
     assert AuthJWT.get_token_refresh_lifetime() == -1000
+
+
+def test_config_default_samesite():
+    """Test that default samesite value is 'lax'."""
+    AuthJWT.config(secret_key="test")  # noqa: S106
+    assert AuthJWT.get_cookie_samesite() == "lax"
+
+
+def test_config_samesite_variations():
+    """Test config with different samesite values."""
+    samesite_values: list[SameSiteTypes] = ["lax", "strict", "none"]
+    for samesite in samesite_values:
+        AuthJWT.config(secret_key="test", cookie_samesite=samesite)  # noqa: S106
+        assert AuthJWT.get_cookie_samesite() == samesite

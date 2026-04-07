@@ -15,6 +15,7 @@ from fastapi_jwt_authlib.exception import (
 from fastapi_jwt_authlib.helper import default_if_none
 
 TokenTypes = Literal["access", "refresh"]
+SameSiteTypes = Literal["lax", "strict", "none"]
 
 
 @dataclass
@@ -40,6 +41,7 @@ class AuthJWT:
     _cookie_access_path: str = "/"
     _cookie_refresh_path: str = "/"
     _cookie_secure: bool = True
+    _cookie_samesite: SameSiteTypes = "lax"
 
     _token_access_lifetime: int = 15 * 60  # 15 minutes
     _token_refresh_lifetime: int = 2 * 24 * 60 * 60  # 1 day
@@ -59,6 +61,7 @@ class AuthJWT:
         cookie_access_path: str | None = None,
         cookie_refresh_path: str | None = None,
         cookie_secure: bool | None = None,
+        cookie_samesite: SameSiteTypes | None = None,
         token_access_lifetime: int | None = None,
         token_refresh_lifetime: int | None = None,
     ) -> None:
@@ -70,6 +73,7 @@ class AuthJWT:
         cls._cookie_access_path = default_if_none(cookie_access_path, cls._cookie_access_path)
         cls._cookie_refresh_path = default_if_none(cookie_refresh_path, cls._cookie_refresh_path)
         cls._cookie_secure = default_if_none(cookie_secure, cls._cookie_secure)
+        cls._cookie_samesite = default_if_none(cookie_samesite, cls._cookie_samesite)
 
         cls._token_access_lifetime = default_if_none(token_access_lifetime, cls._token_access_lifetime)
         cls._token_refresh_lifetime = default_if_none(token_refresh_lifetime, cls._token_refresh_lifetime)
@@ -97,6 +101,10 @@ class AuthJWT:
     @classmethod
     def get_cookie_secure(cls) -> bool:
         return cls._cookie_secure
+
+    @classmethod
+    def get_cookie_samesite(cls) -> SameSiteTypes:
+        return cls._cookie_samesite
 
     @classmethod
     def get_token_access_lifetime(cls) -> int:
@@ -147,7 +155,7 @@ class AuthJWT:
             path=path,
             secure=self._cookie_secure,
             httponly=True,
-            samesite="lax",
+            samesite=self._cookie_samesite,
         )
 
     def _set_access_cookies(self, token: str):
@@ -203,7 +211,7 @@ class AuthJWT:
             path=self._cookie_access_path,
             secure=self._cookie_secure,
             httponly=True,
-            samesite="lax",
+            samesite=self._cookie_samesite,
         )
 
     def unset_refresh_cookies(self):
@@ -212,7 +220,7 @@ class AuthJWT:
             path=self._cookie_refresh_path,
             secure=self._cookie_secure,
             httponly=True,
-            samesite="lax",
+            samesite=self._cookie_samesite,
         )
 
     def unset_cookies(self):
